@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+
 	"gopkg.in/h2non/bimg.v0"
 )
 
@@ -66,6 +67,13 @@ type ImageInfo struct {
 	Profile     bool   `json:"hasProfile"`
 	Channels    int    `json:"channels"`
 	Orientation int    `json:"orientation"`
+}
+
+type ColorMap struct {
+	Background string `json:"background"`
+	Primary    string `json:"primary"`
+	Secondary  string `json:"secondary"`
+	// Tertiary   string `json:"tertiary"`
 }
 
 func Info(buf []byte, o ImageOptions) (Image, error) {
@@ -246,4 +254,24 @@ func Process(buf []byte, opts bimg.Options) (Image, error) {
 
 	mime := GetImageMimeType(bimg.DetermineImageType(buf))
 	return Image{Body: buf, Mime: mime}, nil
+}
+
+func Map(buf []byte, o ImageOptions) (Image, error) {
+	image := Image{Mime: "application/json"}
+	/*
+		meta, err := bimg.Metadata(buf)
+		if err != nil {
+			return image, NewError("Cannot retrieve image medatata: %s"+err.Error(), BAD_REQUEST)
+		}
+	*/
+	colors := ColorMap{
+		Background: "#233218",
+		Primary:    "#dcb262",
+		Secondary:  "#d2c2d0",
+	}
+
+	body, _ := json.Marshal(colors)
+	image.Body = body
+
+	return image, nil
 }
